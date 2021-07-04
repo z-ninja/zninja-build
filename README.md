@@ -57,6 +57,45 @@ Compile:
   --diagnostics-color             Turn on diagnostics color of compiler
   ```
 
+# Manual Use Example from command line
+Go to workspace directory where zninja-build project is located.
+```cpp
+./bin/zninja-build -w `pwd` --cc gcc --cxx g++ --build-variant release -p linux --show --cxxflags "-std=c++17 -DOS_LINUX -fexceptions -Wall -O2 -m64" --ldlibs "-m64 -lpthread -lboost_filesystem -lboost_program_options -s"  --build  --diagnostics-color -t 4 -s zninja-build --link
+```
+-w is workspace directory for example ~/projects
+--cc is C compiler path, gcc or /usr/bin/gcc
+
+--cxx is C++ compiler path, g++ or /usr/bin/g++
+
+--build-variant is branch of build type. In above example build-variant is realease, each build-variant can have its own configuration which can be loaded via --load parameter but previouslly must be saved with --save parameter, so next time we call build variant we can use --load parameter instead passing all compiler arguments trough command line. 
+
+For example: 
+```cpp
+// saving configuration for build variant release
+./bin/zninja-build -w `pwd` --cc gcc --cxx g++ --build-variant release -p linux --show --cxxflags "-std=c++17 -DOS_LINUX -fexceptions -Wall -O2 -m64" --ldlibs "-m64 -lpthread -lboost_filesystem -lboost_program_options -s" -s zninja-build --save
+
+// loading configuration for build variant release
+/bin/zninja-build -w `pwd` --cc gcc --cxx g++ --build-variant release -p linux -s zninja-build --load --build --link
+```
+
+-p is operating system branch for objects,realease, configuration to be located at, in our case "linux"
+
+--show this argument will output loaded or passed compiler configuration
+
+--cxxflags  are cxxflags for c++ compiler to be used for compilation.
+
+--ldlibs are linker flags to be used for linking
+
+--build tells program to compile each source file if conditions are meet, meaning program will test if source file is modified and each header found in source file and their dependency. So by modifying headers can require for program to recompile one or more source file. There is also --rebuild parameter which force program to recompile all files and also --build-file will compile single source file.
+
+Detecting modification is done by generating sha256 hash of each soruce/header file and comparing it with previous known hash of same file. 
+
+--diagnostics-color will force compiler to output colored diagnostics text ( gcc/g++)
+
+-t tells program how much source file can be compiled at once in parallel.
+
+--link tells program to link all project object to executable or shared library.
+
 
 
 
