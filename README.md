@@ -1,2 +1,4 @@
 # zninja-build
-Tool to automate c++ build, comapctible with VSCode Editor
+Tool to automate c++ build, compatible with VSCode Editor
+
+
