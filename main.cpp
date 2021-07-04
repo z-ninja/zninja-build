@@ -1707,7 +1707,6 @@ static bool check_directory(fs::path &a_path, std::string a_err_1, std::string a
 }
 static bool fill_dependency_list(config_container &a_cc,std::map<std::string,std::string>&file_mod_list_update, std::map<std::string, std::map<std::string, std::string>> &dependency_list)
 {
-    //std::vector<std::string> system_path_list;
     std::vector<std::string> project_path_list;
     fs::path l_path;
     sha256_hash l_hash;
@@ -1723,19 +1722,18 @@ static bool fill_dependency_list(config_container &a_cc,std::map<std::string,std
         {
             if ((*it)[0] == '-')
             {
-                /// for msvc is different, so hard to make standard :/
                 if ((*it)[1] == 'I')
                 {
                     /// system directive
                     // std::cout << "system directive: " << (*it).substr(2) << std::endl;
                     project_path_list.push_back((*it).substr(2));
                 }
-                else if ((*it)[1] == 'i')
+               /* else if ((*it)[1] == 'i')
                 {
                     /// project directive
                     // std::cout << "local directive: " << (*it).substr(2) << std::endl;
                     project_path_list.push_back((*it).substr(2));
-                }
+                }*/
             }
         }
     }
@@ -1753,12 +1751,12 @@ static bool fill_dependency_list(config_container &a_cc,std::map<std::string,std
                     // std::cout << "system directive: " << (*it).substr(2) << std::endl;
                     project_path_list.push_back((*it).substr(2));
                 }
-                else if ((*it)[1] == 'i')
+              /*  else if ((*it)[1] == 'i')
                 {
                     /// project directive
                     // std::cout << "local directive: " << (*it).substr(2) << std::endl;
                     project_path_list.push_back((*it).substr(2));
-                }
+                }*/
             }
         }
     }
@@ -1780,24 +1778,17 @@ static bool fill_dependency_list(config_container &a_cc,std::map<std::string,std
                       }*/
                     project_path_list.push_back((*it).substr(2));
                 }
-                else if ((*it)[1] == 'i')
+               /* else if ((*it)[1] == 'i')
                 {
                     /// project directive
                     //std::cout << "local directive: " << (*it).substr(2) << std::endl;
                     project_path_list.push_back((*it).substr(2));
-                }
+                }*/
             }
         }
     }
 
 
-
-    /*for (auto it = project_path_list.begin(); it != project_path_list.end(); it++)
-    {
-        l_path = (*it);
-
-        std::cout << "path: " << l_path << " ( " << l_path.filename_is_dot() << " ) " << l_path.filename() << std::endl;
-    }*/
     if (!ls_path(a_cc.m_section_root, [&](fs::path &a_path) -> bool
 {
     if (fs::is_regular_file(a_path))
