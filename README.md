@@ -1,7 +1,7 @@
 # zninja-build
 Tool to automate c++ build, compatible with VSCode Editor
 
-Addopted for g++ compiler. 
+Addopted for gcc/g++ compiler. 
 
 # Build
 ```cpp
@@ -100,5 +100,295 @@ Detecting modification is done by generating sha256 hash of each soruce/header f
 
 
 
+# BASIC VSCODE EDITOR SET UP
+tasks.json
+```json
+{
+    "tasks": [
+        
+        {
+            "type": "shell",
+            "label": "ZNINJA-BUILD Build release section and set as active",
+            "command": "echo -n ${relativeFileDirname} | grep -oP  '^(.*?)(?=/|$)' | while read n;do ln -sfr \"${workspaceFolder}/bin/linux/release/$n\" \"${workspaceFolder}/bin/active_release\";done",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Build debug build variant",
+           "dependsOn":["ZNINJA-BUILD Build release Section"]
+        },
+        {
+            "type": "shell",
+            "label": "ZNINJA-BUILD Build debug section and set as active",
+            "command": "echo -n ${relativeFileDirname} | grep -oP  '^(.*?)(?=/|$)' | while read n;do ln -sfr \"${workspaceFolder}/bin/linux/debug/$n\" \"${workspaceFolder}/bin/active_dbg\";done",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Build debug build variant",
+           "dependsOn":["ZNINJA-BUILD Build debug Section"]
+        },
+        {
+            "type": "cppbuild",
+            "label": "ZNINJA-BUILD Build debug Section",
+            "command": "./bin/zninja-build",
+            "args": [
+                "-w",
+                "${workspaceRoot}",
+                "-s",
+                "${relativeFile}",
+                "-p",
+                "linux",
+                "--build-variant",
+                "debug",
+                "--load",
+                "--build",
+                "--link" ,
+                "-t",
+                "4" ,
+                "--diagnostics-color"                     
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Build debug build variant",
+        },
+        {
+            "type": "cppbuild",
+            "label": "ZNINJA-BUILD Build release Section",
+            "command": "./bin/zninja-build",
+            "args": [
+                "-w",
+                "${workspaceRoot}",
+                "-s",
+                "${relativeFile}",
+                "-p",
+                "linux",
+                "--build-variant",
+                "release",
+                "--load",
+                "--build",
+                "--link" ,
+                "-t",
+                "4",
+                "--diagnostics-color"                   
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Build release build variant",
+        },
+        {
+            "type": "cppbuild",
+            "label": "ZNINJA-BUILD Rebuild debug Section",
+            "command": "./bin/zninja-build",
+            "args": [
+                "-w",
+                "${workspaceRoot}",
+                "-s",
+                "${relativeFile}",
+                "-p",
+                "linux",
+                "--build-variant",
+                "debug",
+                "--load",
+                "--rebuild",
+                "--link" ,
+                "-t",
+                "4",
+                "--diagnostics-color"          
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Rebuild debug build variant",
+        },
+        {
+            "type": "cppbuild",
+            "label": "ZNINJA-BUILD Rebuild release Section",
+            "command": "./bin/zninja-build",
+            "args": [
+                "-w",
+                "${workspaceRoot}",
+                "-s",
+                "${relativeFile}",
+                "-p",
+                "linux",
+                "--build-variant",
+                "release",
+                "--load",
+                "--rebuild",
+                "--link" ,
+                "-t",
+                "4",
+                "--diagnostics-color"                        
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Rebuild release build variant",
+        },
+        {
+            "type": "process",
+            "label": "ZNINJA-BUILD Section Init",
+            "command": "./bin/zninja-build",
+            "args": [
+                "-w",
+                "${workspaceRoot}",
+                "-s",
+                "${relativeFile}",
+                "-p",
+                "linux",
+                "--build-variant",
+                "release",
+                "--load",
+                "--show"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Create build variants Relase/Debug default configuration",
+            "dependsOn": [
+                "ZNINJA-BUILD Section Init Release","ZNINJA-BUILD Section Init Debug"
+            ],
+            "dependsOrder": "sequence"  
+        },
+        {
+            "type": "process",
+            "label": "ZNINJA-BUILD Section Init Release",
+            "command": "./bin/zninja-build",
+            "args": [
+                "-w",
+                "${workspaceRoot}",
+                "-s",
+                "${relativeFile}",
+                "-p",
+                "linux",
+                "--build-variant",
+                "release",
+                "--cc",
+                "gcc",
+                "--cxx",
+                "g++",
+                "--cxxflags",
+                "-std=c++17 -fexceptions -Wall -O2",
+                "--cppflags",
+                "-I${workspaceRoot}",
+                "--save"            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Save default release configuration for section",
+            },
+        {
+            "type": "process",
+            "label": "ZNINJA-BUILD Section Init Debug",
+            "command": "./bin/zninja-build",
+            "args": [
+                "-w",
+                "${workspaceRoot}",
+                "-s",
+                "${relativeFile}",
+                "-p",
+                "linux",
+                "--build-variant",
+                "debug",
+                "--cc",
+                "gcc",
+                "--cxx",
+                "g++",
+                "--cxxflags",
+                "-std=c++17 -fexceptions -Wall -g",
+                "--cppflags",
+                "-I${workspaceRoot}",
+                "--save"            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Save default debug configuration for section",
+            },
+    ],
+    "version": "2.0.0"
+}
+```
+launch.json
+```json
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ZNINJA-BUILD DBG",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/bin/active_dbg",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}/bin/",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+        
+            "preLaunchTask": "ZNINJA-BUILD Build debug section and set as active" ,
+            "miDebuggerPath": "/usr/bin/gdb"
+        }
+    ]
+}
+```
+I have seen vscode editor as good choice to replace my tool for code editing and compiling. So I decided to give this editor automated functionallity which fits my needs. But later it turns out it is not what I was seeking for. 
 
+Code editor which eats that much resources is not good editor for serious project starting.
+While my old code editor needs about 200 MB of ram for this project to write.
+To build main.cpp file, you will need up to 1 GB of RAM with g++ on 64 bit machine(linux).
+I have seen, vscode can use more then 1 GB of RAM. That is too much for code editor.
+Beside that, it has few annoying functionality, which should not exists by paying that much high price in resoruces.
+So I stoped addopting this project to other platform.
+
+
+My understanding of workspace is to have one or more projects in workspace, while VSCODE see workspace as a project or single file as a project.
+So, goal was to automate project/section compilation of vscode active (directory/workspace) and consider them as modules of a workspace.
 
