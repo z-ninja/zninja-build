@@ -94,6 +94,8 @@ Detecting modification is done by generating sha256 hash of each soruce/header f
 
 -t tells program how much source file can be compiled at once in parallel.
 
+-s or --section is name of section we want to perform action, in our case is building and linking ( this argument is required, it must be an relative path to section from workspace path. For example if we have workspace at ~/projects  section zninja-build path should be ~/projects/zninja-build  and argument for it should be zninja-build unless we want to compile sigle file (main.cpp for example). In that case it should be zninja-build/main.cpp
+
 --link tells program to link all project object to executable or shared library.
 
 
