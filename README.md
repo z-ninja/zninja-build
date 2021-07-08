@@ -1,7 +1,7 @@
 # zninja-build
 Tool to automate c++ build, compatible with VSCode Editor
 
-Addopted for gcc/g++ compiler. 
+Adopted for gcc/g++ compiler. 
 
 # Build
 ```cpp
